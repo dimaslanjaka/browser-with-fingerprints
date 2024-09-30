@@ -33,10 +33,14 @@ class SettingsCleaner {
     for (const folder of this.#folders) {
       const pattern = path.join(folder, `{${['t', 's']}}`, '*');
 
-      for (const { stats, path } of await fg(pattern, { stats: true, onlyFiles: false, onlyDirectories: false })) {
-        if (Date.now() - stats.mtime > CLEANUP_INTERVAL && !(await lock.check(path))) {
-          await rm(path, { recursive: true });
+      try {
+        for (const { stats, path } of await fg(pattern, { stats: true, onlyFiles: false, onlyDirectories: false })) {
+          if (Date.now() - stats.mtime > CLEANUP_INTERVAL && !(await lock.check(path))) {
+            await rm(path, { recursive: true });
+          }
         }
+      } catch (e) {
+        console.error('fail cleanup', e.message)
       }
     }
   }
