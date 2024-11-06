@@ -124,7 +124,7 @@ module.exports = class RemoteEngine extends EventEmitter {
     const project = await fs.readFile(PROJECT_PATH, 'utf8');
     const version = project.match(/<EngineVersion>(\d+.\d+.\d+)<\/EngineVersion>/)[1];
     const url = `http://bablosoft.com/distr/FastExecuteScript${ARCH}/${version}/FastExecuteScript.x${ARCH}.zip.meta.json`;
-    console.log('meta url', url);
+    // console.log('meta url', url);
 
     const metaPath = path.join(this.#cwd, `${version}_${ARCH}.json`);
     if (await exists(metaPath)) {
