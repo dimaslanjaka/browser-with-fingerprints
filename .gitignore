@@ -6,3 +6,5 @@ prebuilds
 *.gyp
 build
 data
+yarn.lock
+package-lock.json
