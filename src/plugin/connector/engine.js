@@ -84,11 +84,13 @@ module.exports = class RemoteEngine extends EventEmitter {
     const engineDir = path.join(this.#cwd, 'engine', this.#meta.version);
     const zipPath = path.join(engineDir, `FastExecuteScript.x${ARCH}.zip`);
     const scriptPath = path.join(scriptDir, 'FastExecuteScript.exe');
-    console.log('meta', this.#meta);
+    // console.log('meta', this.#meta);
 
     if (this.#meta && (await exists(zipPath))) {
-      if (this.#meta.checksum !== (await checksum(zipPath))) {
-        await fs.rm(engineDir, { recursive: true, force: true });
+      const downloadedChecksum = await checksum(zipPath);
+      console.log('meta.checksum', this.#meta.checksum, 'downloaded checksum', downloadedChecksum);
+      if (this.#meta.checksum !== downloadedChecksum) {
+        await fs.rm(zipPath, { recursive: true, force: true });
       }
     }
 
