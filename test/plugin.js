@@ -74,7 +74,7 @@ describe('plugin', () => {
         headless: true,
         userDataDir: '',
         executablePath: '',
-        defaultViewport: {},
+        defaultViewport: {}
       });
 
       assert.equal(result.headless, false);

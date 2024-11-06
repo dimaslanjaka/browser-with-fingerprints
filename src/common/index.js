@@ -24,7 +24,7 @@ exports.scripts = {
    *
    * @internal
    */
-  getViewport: () => ({ width: window.innerWidth, height: window.innerHeight }),
+  getViewport: () => ({ width: window.innerWidth, height: window.innerHeight })
 };
 
 /**

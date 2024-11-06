@@ -7,23 +7,23 @@ describe('plugin', () => {
       {
         ipExtractionURL: 'https://api.ipapi.is/',
         ipExtractionMethod: 'jsonpath',
-        ipExtractionParam: '$.ip',
+        ipExtractionParam: '$.ip'
       },
       {
         ipExtractionURL: 'https://api.ipapi.is/',
         ipExtractionMethod: 'regexp',
-        ipExtractionParam: '\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}',
+        ipExtractionParam: '\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}'
       },
       {
         ipExtractionURL: 'https://ipwho.is/?output=xml',
         ipExtractionMethod: 'xpath',
-        ipExtractionParam: '//query/ip',
+        ipExtractionParam: '//query/ip'
       },
       {
         ipExtractionURL: 'https://api.ipify.org/',
         ipExtractionMethod: 'raw',
-        ipExtractionParam: '',
-      },
+        ipExtractionParam: ''
+      }
     ];
 
     for (const ipExtractionConfig of ipExtractionConfigs) {

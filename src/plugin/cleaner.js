@@ -26,7 +26,7 @@ class SettingsCleaner {
         await lock[shouldLock ? 'lock' : 'unlock'](itemPath, {
           onCompromised: () => {
             debug(`The lock file at path ${itemPath} was not updated.`);
-          },
+          }
         });
       } catch (err) {
         if (err.code !== 'ENOENT') throw err;
@@ -45,7 +45,7 @@ class SettingsCleaner {
           }
         }
       } catch (e) {
-        console.error('fail cleanup', e.message)
+        console.error('fail cleanup', e.message);
       }
     }
   }

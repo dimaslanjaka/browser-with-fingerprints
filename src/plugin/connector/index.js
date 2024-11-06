@@ -8,7 +8,7 @@ const debug = require('debug')('browser-with-fingerprints:connector');
 const DEFAULT_TIMEOUT = 300_000;
 const engine = new RemoteEngine({
   timeout: process.env.FINGERPRINT_TIMEOUT,
-  cwd: process.env.FINGERPRINT_CWD,
+  cwd: process.env.FINGERPRINT_CWD
 });
 
 engine.on('beforeExtract', () => {
@@ -62,8 +62,8 @@ async function call(name, params = {}) {
 }
 
 exports.setEngineOptions = ({ folder = '', timeout = 0 } = {}) => {
-  timeout && (engine.timeout = timeout);
-  folder && (engine.cwd = folder);
+  if (timeout) engine.timeout = timeout;
+  if (folder) engine.cwd = folder;
 };
 
 exports.versions = (format = 'default') => call('versions', { format });

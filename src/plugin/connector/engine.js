@@ -64,7 +64,7 @@ module.exports = class RemoteEngine extends EventEmitter {
     await fs.writeFile(requestPath, JSON.stringify({ name, params }));
 
     const requestWatcher = chokidar.watch(requestPath, {
-      awaitWriteFinish: true,
+      awaitWriteFinish: true
     });
     const response = await new Promise((resolve) => {
       requestWatcher.on('change', async () => {
@@ -130,7 +130,7 @@ module.exports = class RemoteEngine extends EventEmitter {
       this.#meta = await axios.get(url).then(({ data }) => ({
         checksum: data.Checksum,
         url: data.Url,
-        version,
+        version
       }));
 
       await fs.mkdir(path.dirname(metaPath), { recursive: true });

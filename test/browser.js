@@ -4,7 +4,7 @@ const { setViewport } = require('../src/plugin/browser');
 
 const viewports = Array.from({ length: 6 }, (_, i) => ({
   width: (i + 5) * 100,
-  height: (i + 5) * 100,
+  height: (i + 5) * 100
 }));
 
 describe('browser', () => {
@@ -13,7 +13,7 @@ describe('browser', () => {
 
     beforeEach(async function () {
       browser = await plugin.spawn({
-        headless: !this.test.title.includes('headful'),
+        headless: !this.test.title.includes('headful')
       });
     });
 

@@ -74,10 +74,10 @@ module.exports = class FingerprintPlugin {
       version: this.version,
       profile: this.profile ?? {
         value: getProfilePath(options),
-        options: { loadProxy: true, loadFingerprint: true },
+        options: { loadProxy: true, loadFingerprint: true }
       },
       pid: crypto.randomUUID(),
-      key: typeof options.key === 'string' ? options.key : serviceKey,
+      key: typeof options.key === 'string' ? options.key : serviceKey
     });
 
     await cleaner.watch(pwd).ignore(pwd, pid, id);
@@ -90,7 +90,7 @@ module.exports = class FingerprintPlugin {
       userDataDir: null,
       defaultViewport: null,
       executablePath: `${path}/worker.exe`,
-      args: [`--parent-process-id=${pid}`, `--unique-process-id=${id}`, ...defaultArgs({ ...options, ...config })],
+      args: [`--parent-process-id=${pid}`, `--unique-process-id=${id}`, ...defaultArgs({ ...options, ...config })]
     });
 
     await (useDefaultLauncher ? configure : this.configure.bind(this))(

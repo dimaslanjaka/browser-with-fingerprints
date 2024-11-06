@@ -45,7 +45,7 @@ exports.setViewport = async (browser, { diff, width, height }) => {
 exports.getViewport = async (cdp) => {
   const { result } = await cdp.Runtime.evaluate({
     expression: `({ height: window.innerHeight, width: window.innerWidth })`,
-    returnByValue: true,
+    returnByValue: true
   });
   return result.value;
 };
@@ -67,6 +67,6 @@ const waitForResize = async (cdp) => {
       }).observe(document.body);
     })`,
     returnByValue: true,
-    awaitPromise: true,
+    awaitPromise: true
   });
 };

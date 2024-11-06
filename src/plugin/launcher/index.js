@@ -8,7 +8,7 @@ module.exports = {
 
     const process = spawn(executablePath, [...args, `--remote-debugging-port=${debuggingPort}`], {
       detached: false,
-      shell: false,
+      shell: false
     });
 
     const url = await new Promise((resolve, reject) => {
@@ -39,5 +39,5 @@ module.exports = {
     };
 
     return { url, port, close, process };
-  },
+  }
 };

@@ -28,7 +28,7 @@ describe('plugin', () => {
       'useProxy',
       'useProfile',
       'useFingerprint',
-      'useBrowserVersion',
+      'useBrowserVersion'
     ]) {
       assert.equal(typeof plugin[method], 'function');
     }

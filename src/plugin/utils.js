@@ -5,7 +5,7 @@ exports.defaultArgs = ({ args = [], profile = '', devtools = false, headless = !
     '--no-proxy-server',
     '--bas-disable-tab-hook',
     `--user-data-dir=${profile}`,
-    '--disable-features=NetworkServiceInProcess2',
+    '--disable-features=NetworkServiceInProcess2'
   ];
 
   const processed = args.reduce(

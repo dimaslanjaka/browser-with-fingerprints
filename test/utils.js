@@ -10,7 +10,7 @@ describe('utils', () => {
       const args = defaultArgs({
         args: ['--load-extension=test', '--disable-extensions-except=test'],
         extensions: ['path'],
-        profile: 'test',
+        profile: 'test'
       });
 
       assert(args.includes('--user-data-dir=test'));
@@ -60,7 +60,7 @@ describe('utils', () => {
 
     it('should throw an error otherwise', () => {
       assert.throws(() => validateConfig('test', {}, ''), {
-        message: 'Invalid arguments for test configuration.',
+        message: 'Invalid arguments for test configuration.'
       });
     });
   });
