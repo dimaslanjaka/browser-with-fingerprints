@@ -10,6 +10,10 @@ const { pipeline } = require('stream/promises');
 const { InvalidEngineError } = require('./errors');
 const { createHash, randomUUID } = require('crypto');
 const { createReadStream, createWriteStream, existsSync } = require('fs');
+const stream = require('stream');
+const { promisify } = require('util');
+const finished = promisify(stream.finished);
+const Axios = require('axios');
 
 const CLOSE_TIMEOUT = 60000;
 
@@ -84,23 +88,22 @@ module.exports = class RemoteEngine extends EventEmitter {
     const engineDir = path.join(this.#cwd, 'engine', this.#meta.version);
     const zipPath = path.join(engineDir, `FastExecuteScript.x${ARCH}.zip`);
     const scriptPath = path.join(scriptDir, 'FastExecuteScript.exe');
-    // console.log('meta', this.#meta);
 
     if (this.#meta && (await exists(zipPath))) {
       const downloadedChecksum = await checksum(zipPath);
-      console.log('meta.checksum', this.#meta.checksum, 'downloaded checksum', downloadedChecksum);
       if (this.#meta.checksum !== downloadedChecksum) {
+        console.log('remote', this.#meta.checksum, 'local', downloadedChecksum, 'mismatch');
         await fs.rm(zipPath, { recursive: true, force: true });
       }
     }
 
-    if (!(await exists(engineDir)) || !(await exists(scriptPath))) {
+    if (!(await exists(engineDir)) || !(await exists(zipPath))) {
       this.emit('beforeDownload');
       await fs.mkdir(engineDir, { recursive: true });
       await download(this.#meta.url, zipPath);
     }
 
-    if (!(await exists(scriptDir))) {
+    if (!(await exists(scriptDir)) || !(await exists(scriptPath))) {
       this.emit('beforeExtract');
       await fs.mkdir(scriptDir, { recursive: true });
       await extract(zipPath, { dir: scriptDir });
@@ -155,10 +158,15 @@ async function checksum(path) {
   return hash.digest('hex');
 }
 
-async function download(url, path) {
-  console.log('plugin connector download', url, 'to', path);
-  return axios.get(url, { responseType: 'stream' }).then((response) => {
-    const writer = createWriteStream(path);
-    return pipeline(response.data, writer);
+async function download(fileUrl, outputLocationPath) {
+  const writer = createWriteStream(outputLocationPath);
+  return await Axios({
+    method: 'get',
+    url: fileUrl,
+    responseType: 'stream',
+    maxRedirects: 10
+  }).then(async (response) => {
+    response.data.pipe(writer);
+    return await finished(writer);
   });
 }
