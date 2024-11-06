@@ -41,7 +41,7 @@ class SettingsCleaner {
       try {
         for (const { stats, path } of await fg(pattern, { stats: true, onlyFiles: false, onlyDirectories: false })) {
           if (Date.now() - stats.mtime > CLEANUP_INTERVAL && !(await lock.check(path))) {
-            await rm(path, { recursive: true });
+            await rm(path, { recursive: true, force: true });
           }
         }
       } catch (e) {

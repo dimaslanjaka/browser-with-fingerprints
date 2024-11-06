@@ -54,7 +54,7 @@
     "node": ">= 18"
   },
   "files": [
-    "src",
+    "src/",
     "project.xml"
   ],
   "cpu": [

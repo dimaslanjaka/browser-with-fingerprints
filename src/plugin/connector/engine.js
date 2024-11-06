@@ -9,7 +9,7 @@ const { execFile } = require('child_process');
 const { pipeline } = require('stream/promises');
 const { InvalidEngineError } = require('./errors');
 const { createHash, randomUUID } = require('crypto');
-const { createReadStream, createWriteStream } = require('fs');
+const { createReadStream, createWriteStream, existsSync } = require('fs');
 
 const CLOSE_TIMEOUT = 60000;
 
@@ -83,14 +83,16 @@ module.exports = class RemoteEngine extends EventEmitter {
     const scriptDir = path.join(this.#cwd, 'script', this.#meta.version);
     const engineDir = path.join(this.#cwd, 'engine', this.#meta.version);
     const zipPath = path.join(engineDir, `FastExecuteScript.x${ARCH}.zip`);
+    const scriptPath = path.join(scriptDir, 'FastExecuteScript.exe');
+    console.log('meta', this.#meta);
 
     if (this.#meta && (await exists(zipPath))) {
       if (this.#meta.checksum !== (await checksum(zipPath))) {
-        await fs.rm(engineDir, { recursive: true });
+        await fs.rm(engineDir, { recursive: true, force: true });
       }
     }
 
-    if (!(await exists(engineDir))) {
+    if (!(await exists(engineDir)) || !(await exists(scriptPath))) {
       this.emit('beforeDownload');
       await fs.mkdir(engineDir, { recursive: true });
       await download(this.#meta.url, zipPath);
@@ -106,22 +108,18 @@ module.exports = class RemoteEngine extends EventEmitter {
     await fs.writeFile(path.join(scriptDir, 'worker_command_line.txt'), '--mock-connector');
     await fs.writeFile(path.join(scriptDir, 'settings.ini'), 'RunProfileRemoverImmediately=true');
 
-    return execFile(
-      path.join(scriptDir, 'FastExecuteScript.exe'),
-      ['--silent', ...this.args],
-      { cwd: scriptDir },
-      (error) => {
-        if (error) {
-          throw new InvalidEngineError(`Unable to start engine process (code: ${error.code})`);
-        }
+    return execFile(scriptPath, ['--silent', ...this.args], { cwd: scriptDir }, (error) => {
+      if (error) {
+        throw new InvalidEngineError(`Unable to start engine process (code: ${error.code})`);
       }
-    );
+    });
   }
 
   async #updateMeta() {
     const project = await fs.readFile(PROJECT_PATH, 'utf8');
     const version = project.match(/<EngineVersion>(\d+.\d+.\d+)<\/EngineVersion>/)[1];
     const url = `http://bablosoft.com/distr/FastExecuteScript${ARCH}/${version}/FastExecuteScript.x${ARCH}.zip.meta.json`;
+    console.log('meta url', url);
 
     const metaPath = path.join(this.#cwd, `${version}_${ARCH}.json`);
     if (await exists(metaPath)) {
@@ -142,7 +140,7 @@ module.exports = class RemoteEngine extends EventEmitter {
 async function exists(path) {
   try {
     await fs.access(path);
-    return true;
+    return existsSync(path);
   } catch {
     return false;
   }
@@ -156,6 +154,7 @@ async function checksum(path) {
 }
 
 async function download(url, path) {
+  console.log('plugin connector download', url, 'to', path);
   return axios.get(url, { responseType: 'stream' }).then((response) => {
     const writer = createWriteStream(path);
     return pipeline(response.data, writer);
